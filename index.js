@@ -7,7 +7,7 @@ app.get('/', function(req, res) {
     res.send('index');
 });
 
-router.get('/proxyimage', (req, res) => {
+app.get('/proxyimage', (req, res) => {
     const { url } = req.query;
     const headers = {};
 
