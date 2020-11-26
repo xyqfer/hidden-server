@@ -1,5 +1,9 @@
 const express = require('express');
 const request = require('request');
+const https = require('https');
+const { SocksProxyAgent } = require('socks-proxy-agent');
+
+const agent = new SocksProxyAgent('socks5h://127.0.0.1:9050');
 
 const app = express();
 
@@ -7,21 +11,13 @@ app.get('/', function(req, res) {
     res.send('index');
 });
 
-app.get('/proxyimage', (req, res) => {
+app.get('/proxyimage', (req, resp) => {
     const { url } = req.query;
-    const headers = {};
-
-    if (req.headers.range) {
-        headers.Range = req.headers.range;
-    }
-
-    request
-        .get({
-            url,
-            headers,
-            proxy: 'socks5h://127.0.0.1:9050'
-        })
-        .pipe(res);
+    https.get(url, {
+      agent
+    }, res => {
+      res.pipe(resp);
+    });
 });
 
 const PORT = parseInt(process.env.PORT || 3000);
