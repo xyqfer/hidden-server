@@ -2,6 +2,7 @@ const express = require('express');
 const request = require('request');
 const https = require('https');
 const { SocksProxyAgent } = require('socks-proxy-agent');
+const tr = require('tor-request');
 
 const agent = new SocksProxyAgent('socks5h://127.0.0.1:9050');
 
@@ -13,10 +14,9 @@ app.get('/', function(req, res) {
 
 app.get('/proxyimage', (req, resp) => {
     const { url } = req.query;
-    https.get(url, {
-      agent
-    }, res => {
-      res.pipe(resp);
+    
+    tr.request(url, function (err, res, body) {
+      resp.send(body);
     });
 });
 
